@@ -309,6 +309,8 @@
 !if $(UNIVERSAL_PAYLOAD) == FALSE
   !if $(BOOTLOADER) == "COREBOOT"
     BlParseLib|UefiPayloadPkg/Library/CbParseLib/CbParseLib.inf
+  !elseif $(BOOTLOADER) == "APPLETV"
+    BlParseLib|UefiPayloadPkg/Library/AppleTvParseLib/AppleTvParseLib.inf
   !else
     BlParseLib|UefiPayloadPkg/Library/SblParseLib/SblParseLib.inf
   !endif
@@ -438,7 +440,7 @@
 #
 ################################################################################
 [PcdsFeatureFlag]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|TRUE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutGopSupport|TRUE
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport|FALSE
   ## This PCD specified whether ACPI SDT protocol is installed.
@@ -657,7 +659,7 @@
   !include NetworkPkg/Network.dsc.inc
 !endif
 
-[Components.X64]
+[Components.IA32]
   #
   # DXE Core
   #
@@ -893,7 +895,7 @@
   ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
   !include NetworkPkg/NetworkLibs.dsc.inc
 
-[Components.X64]
+[Components.IA32]
   ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf {
     <PcdsFixedAtBuild>
       ## This flag is used to control initialization of the shell library
