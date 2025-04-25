@@ -20,7 +20,7 @@ InitializeHwErrRecSupport (
   VOID
   )
 {
-  EFI_STATUS  Status;
+  //EFI_STATUS  Status;
   UINT16      HardwareErrorRecordLevel;
 
   HardwareErrorRecordLevel = PcdGet16 (PcdHardwareErrorRecordLevel);
@@ -30,13 +30,13 @@ InitializeHwErrRecSupport (
     // If level value equal 0, no need set to 0 to variable area because UEFI specification
     // define same behavior between no value or 0 value for L"HwErrRecSupport".
     //
-    Status = gRT->SetVariable (
-                    L"HwErrRecSupport",
-                    &gEfiGlobalVariableGuid,
-                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-                    sizeof (UINT16),
-                    &HardwareErrorRecordLevel
-                    );
-    ASSERT_EFI_ERROR (Status);
+    //Status = gRT->SetVariable (
+    //                L"HwErrRecSupport",
+    //                &gEfiGlobalVariableGuid,
+     //               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+     //               sizeof (UINT16),
+    //                &HardwareErrorRecordLevel
+     //               );
+    //ASSERT_EFI_ERROR (Status);
   }
 }

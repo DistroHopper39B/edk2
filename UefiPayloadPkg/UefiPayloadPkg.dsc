@@ -29,7 +29,7 @@
   PCD_DYNAMIC_AS_DYNAMICEX            = TRUE
 
   DEFINE SOURCE_DEBUG_ENABLE          = FALSE
-  DEFINE PS2_KEYBOARD_ENABLE          = FALSE
+  DEFINE PS2_KEYBOARD_ENABLE          = TRUE
   DEFINE RAM_DISK_ENABLE              = FALSE
   DEFINE SIO_BUS_ENABLE               = FALSE
   DEFINE SECURITY_STUB_ENABLE         = TRUE
@@ -41,8 +41,8 @@
   DEFINE PS2_MOUSE_ENABLE             = TRUE
   DEFINE SD_MMC_TIMEOUT               = 1000000
   DEFINE USE_CBMEM_FOR_CONSOLE        = FALSE
-  DEFINE BOOTSPLASH_IMAGE             = FALSE
-  DEFINE NVME_ENABLE                  = TRUE
+  DEFINE BOOTSPLASH_IMAGE             = TRUE
+  DEFINE NVME_ENABLE                  = FALSE
   DEFINE CAPSULE_SUPPORT              = FALSE
   DEFINE LOCKBOX_SUPPORT              = FALSE
 
@@ -147,7 +147,7 @@
   # For recent X86 CPU, 0x15 CPUID instruction will return Time Stamp Counter Frequence.
   # This is how BaseCpuTimerLib works, and a recommended way to get Frequence, so set the default value as TRUE.
   # Note: for emulation platform such as QEMU, this may not work and should set it as FALSE
-  DEFINE CPU_TIMER_LIB_ENABLE  = TRUE
+  DEFINE CPU_TIMER_LIB_ENABLE  = FALSE
 
   #
   # HPET:  UEFI Payload will use HPET timer
@@ -319,6 +319,8 @@
 !if $(UNIVERSAL_PAYLOAD) == FALSE
   !if $(BOOTLOADER) == "COREBOOT"
     BlParseLib|UefiPayloadPkg/Library/CbParseLib/CbParseLib.inf
+  !elseif $(BOOTLOADER) == "APPLETV"
+    BlParseLib|UefiPayloadPkg/Library/AppleTvParseLib/AppleTvParseLib.inf
   !else
     BlParseLib|UefiPayloadPkg/Library/SblParseLib/SblParseLib.inf
   !endif
@@ -547,6 +549,7 @@
 #
 ################################################################################
 [PcdsFeatureFlag]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutGopSupport|TRUE
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport|FALSE
   ## This PCD specified whether ACPI SDT protocol is installed.
@@ -903,7 +906,7 @@
   !include NetworkPkg/Network.dsc.inc
 !endif
 
-[Components.X64, Components.AARCH64]
+[Components.IA32]
   #
   # DXE Core
   #
@@ -1211,7 +1214,7 @@
   ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
   !include NetworkPkg/NetworkLibs.dsc.inc
 
-[Components.X64, Components.AARCH64]
+[Components.IA32]
   ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf {
     <PcdsFixedAtBuild>
       ## This flag is used to control initialization of the shell library

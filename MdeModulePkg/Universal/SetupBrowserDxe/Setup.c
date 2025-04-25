@@ -888,6 +888,8 @@ InitializeSetup (
 {
   EFI_STATUS  Status;
   VOID        *Registration;
+  
+  DEBUG ((DEBUG_INFO, "Hello.\n"));
 
   //
   // Locate required Hii relative protocols
