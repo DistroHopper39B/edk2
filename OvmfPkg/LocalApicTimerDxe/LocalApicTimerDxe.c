@@ -360,6 +360,6 @@ TimerDriverInitialize (
                   NULL
                   );
   ASSERT_EFI_ERROR (Status);
-                  
+
   return Status;
 }

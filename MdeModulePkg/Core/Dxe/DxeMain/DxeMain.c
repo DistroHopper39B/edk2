@@ -577,7 +577,7 @@ DxeMain (
       );
   }
 
-  //ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR (Status);
 
   //
   // Report Status code before transfer control to BDS

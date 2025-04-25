@@ -590,7 +590,7 @@ BdsFormalizeOSIndicationVariable (
   //
   // Platform needs to make sure setting volatile variable before calling 3rd party code shouldn't fail.
   //
-  //ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR (Status);
 
   //
   // If OsIndications is invalid, remove it.
@@ -629,7 +629,7 @@ BdsFormalizeOSIndicationVariable (
     //
     // Deleting variable with current variable implementation shouldn't fail.
     //
-    //ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR (Status);
   }
 }
 
