@@ -991,14 +991,17 @@ TimerDriverInitialize (
   //
   // Wait for a few timer interrupts to fire before continuing
   //
-  while (mNumTicks < 10) {
-  }
+  //while (mNumTicks < 10) {
+  //}
 
   DEBUG_CODE_END ();
 
   //
   // Install the Timer Architectural Protocol onto a new handle
   //
+  
+  DEBUG ((DEBUG_INFO, "here\n"));
+  
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &mTimerHandle,
                   &gEfiTimerArchProtocolGuid,
@@ -1006,6 +1009,8 @@ TimerDriverInitialize (
                   NULL
                   );
   ASSERT_EFI_ERROR (Status);
-
+  
+  DEBUG ((DEBUG_INFO, "here\n"));
+  
   return Status;
 }

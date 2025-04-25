@@ -27,7 +27,7 @@
   PCD_DYNAMIC_AS_DYNAMICEX            = TRUE
 
   DEFINE SOURCE_DEBUG_ENABLE          = FALSE
-  DEFINE PS2_KEYBOARD_ENABLE          = FALSE
+  DEFINE PS2_KEYBOARD_ENABLE          = TRUE
   DEFINE RAM_DISK_ENABLE              = FALSE
   DEFINE SIO_BUS_ENABLE               = FALSE
   DEFINE SECURITY_STUB_ENABLE         = TRUE
@@ -39,8 +39,8 @@
   DEFINE PS2_MOUSE_ENABLE             = TRUE
   DEFINE SD_MMC_TIMEOUT               = 1000000
   DEFINE USE_CBMEM_FOR_CONSOLE        = FALSE
-  DEFINE BOOTSPLASH_IMAGE             = FALSE
-  DEFINE NVME_ENABLE                  = TRUE
+  DEFINE BOOTSPLASH_IMAGE             = TRUE
+  DEFINE NVME_ENABLE                  = FALSE
   DEFINE CAPSULE_SUPPORT              = FALSE
 
   #
@@ -143,7 +143,7 @@
   # For recent X86 CPU, 0x15 CPUID instruction will return Time Stamp Counter Frequence.
   # This is how BaseCpuTimerLib works, and a recommended way to get Frequence, so set the default value as TRUE.
   # Note: for emulation platform such as QEMU, this may not work and should set it as FALSE
-  DEFINE CPU_TIMER_LIB_ENABLE  = TRUE
+  DEFINE CPU_TIMER_LIB_ENABLE  = FALSE
 
   #
   # HPET:  UEFI Payload will use HPET timer

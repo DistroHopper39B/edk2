@@ -103,7 +103,9 @@ InitializeLogo (
   EFI_HII_PACKAGE_LIST_HEADER  *PackageList;
   EFI_HII_DATABASE_PROTOCOL    *HiiDatabase;
   EFI_HANDLE                   Handle;
-
+  
+  DEBUG ((DEBUG_INFO, "Hello\n"));
+  
   Status = gBS->LocateProtocol (
                   &gEfiHiiDatabaseProtocolGuid,
                   NULL,
