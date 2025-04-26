@@ -9,7 +9,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 
 #include "DxeIpl.h"
-#include "VirtualMemory.h"
+//#include "VirtualMemory.h"
 
 #define IDT_ENTRY_COUNT  32
 

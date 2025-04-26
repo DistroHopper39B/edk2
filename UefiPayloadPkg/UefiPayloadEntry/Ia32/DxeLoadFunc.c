@@ -16,7 +16,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/PcdLib.h>
 #include <Library/HobLib.h>
 #include <Library/FdtLib.h>
-#include "VirtualMemory.h"
+//#include "VirtualMemory.h"
 #include "UefiPayloadEntry.h"
 
 #include <Ppi/MemoryAttribute.h>
@@ -25,6 +25,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define IDT_ENTRY_COUNT  32
 
 extern VOID  *mHobList;
+
+#if 0
 
 typedef struct _X64_IDT_TABLE {
   //
@@ -396,7 +398,9 @@ HandOffToDxeCore (
   
 }
 */
+#endif
 
+/**/
 VOID
 HandOffToDxeCore (
   IN EFI_PHYSICAL_ADDRESS  DxeCoreEntryPoint,

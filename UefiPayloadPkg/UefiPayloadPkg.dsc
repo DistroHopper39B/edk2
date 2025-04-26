@@ -29,7 +29,7 @@
   PCD_DYNAMIC_AS_DYNAMICEX            = TRUE
 
   DEFINE SOURCE_DEBUG_ENABLE          = FALSE
-  DEFINE PS2_KEYBOARD_ENABLE          = FALSE
+  DEFINE PS2_KEYBOARD_ENABLE          = TRUE
   DEFINE RAM_DISK_ENABLE              = FALSE
   DEFINE SIO_BUS_ENABLE               = FALSE
   DEFINE SECURITY_STUB_ENABLE         = TRUE
@@ -147,13 +147,13 @@
   # For recent X86 CPU, 0x15 CPUID instruction will return Time Stamp Counter Frequence.
   # This is how BaseCpuTimerLib works, and a recommended way to get Frequence, so set the default value as TRUE.
   # Note: for emulation platform such as QEMU, this may not work and should set it as FALSE
-  DEFINE CPU_TIMER_LIB_ENABLE  = TRUE
+  DEFINE CPU_TIMER_LIB_ENABLE  = FALSE
 
   #
   # HPET:  UEFI Payload will use HPET timer
   # LAPIC: UEFI Payload will use local APIC timer
   #
-  DEFINE TIMER_SUPPORT      = HPET
+  DEFINE TIMER_SUPPORT      = LAPIC
 
   DEFINE MULTIPLE_DEBUG_PORT_SUPPORT = FALSE
 
@@ -376,7 +376,7 @@
 !endif
   UefiCpuBaseArchSupportLib|UefiCpuPkg/Library/BaseArchSupportLib/BaseArchSupportLib.inf
 
-[LibraryClasses.X64]
+[LibraryClasses.IA32]
   #
   # CPU
   #
@@ -458,7 +458,7 @@
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
   ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
 
-[LibraryClasses.X64.DXE_CORE]
+[LibraryClasses.IA32.DXE_CORE]
 !if $(SOURCE_DEBUG_ENABLE)
   DebugAgentLib|SourceLevelDebugPkg/Library/DebugAgent/DxeDebugAgentLib.inf
 !endif
@@ -473,7 +473,7 @@
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
   ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
 
-[LibraryClasses.X64.DXE_DRIVER]
+[LibraryClasses.IA32.DXE_DRIVER]
   CpuExceptionHandlerLib|UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib.inf
   MpInitLib|UefiCpuPkg/Library/MpInitLib/DxeMpInitLib.inf
 !if $(SOURCE_DEBUG_ENABLE)
@@ -505,7 +505,7 @@
   PerformanceLib|MdeModulePkg/Library/DxePerformanceLib/DxePerformanceLib.inf
 !endif
 
-[LibraryClasses.X64.SMM_CORE]
+[LibraryClasses.IA32.SMM_CORE]
 !if $(SMM_SUPPORT) == TRUE
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   SmmServicesTableLib|MdeModulePkg/Library/PiSmmCoreSmmServicesTableLib/PiSmmCoreSmmServicesTableLib.inf
@@ -519,7 +519,7 @@
 !endif
 !endif
 
-[LibraryClasses.X64.DXE_SMM_DRIVER]
+[LibraryClasses.IA32.DXE_SMM_DRIVER]
 !if $(SMM_SUPPORT) == TRUE
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
 
@@ -557,8 +557,8 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdHiiOsRuntimeSupport|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdPciDegradeResourceForOptionRom|FALSE
 
-[PcdsFeatureFlag.X64]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|TRUE
+[PcdsFeatureFlag.IA32]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE
   gUefiCpuPkgTokenSpaceGuid.PcdCpuSmmEnableBspElection|FALSE
 
 [PcdsFixedAtBuild]
@@ -918,6 +918,8 @@
       !endif
       NULL|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
+  
+  UefiPayloadPkg/UefiPayloadEntry/UefiPayloadEntry.inf
 
   #
   # Components that produce the architectural protocols
@@ -1132,7 +1134,7 @@
 !endif
 !endif
 
-[Components.X64]
+[Components.IA32]
   UefiCpuPkg/CpuDxe/CpuDxe.inf
 
 !if $(TIMER_SUPPORT) == "HPET"
