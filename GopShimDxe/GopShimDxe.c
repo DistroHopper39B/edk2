@@ -9,10 +9,9 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/DebugLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/DevicePathLib.h>
 #include <Protocol/UgaDraw.h>
 #include <Protocol/DevicePath.h>
-
-
 
 #include "AppleVideo.h"
 
@@ -21,10 +20,10 @@
 EFI_GRAPHICS_OUTPUT_PROTOCOL            NewGop;
 EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE       NewGopMode;
 EFI_GRAPHICS_OUTPUT_MODE_INFORMATION    NewGopInfo;
-EFI_DEVICE_PATH_PROTOCOL                *DevicePath;
 
 FRAME_BUFFER_CONFIGURE                  *FbConf;
 
+// Based on UefiPayloadPkg/GraphicsOutputDxe/GraphicsOutput.c
 CONST ACPI_ADR_DEVICE_PATH  mGraphicsOutputAdrNode = {
   {
     ACPI_DEVICE_PATH,
@@ -120,12 +119,15 @@ EFIAPI
 UefiMain(EFI_HANDLE ImageHandle,
         EFI_SYSTEM_TABLE *SystemTable)
 {
-    EFI_STATUS                      Status;
-    EFI_GRAPHICS_OUTPUT_PROTOCOL    *Gop;
-    APPLE_SCREEN_INFO_PROTOCOL      *AppleScreenInfo;
-    UINT64                          BaseAddress, FrameBufferSize; 
-    UINT32                          BytesPerRow, Width, Height, Depth;
-    UINTN                           FbConfSize = 0;
+    EFI_STATUS                              Status;
+    EFI_GRAPHICS_OUTPUT_PROTOCOL            *Gop;
+    APPLE_SCREEN_INFO_PROTOCOL              *AppleScreenInfo;
+    EFI_DEVICE_PATH_PROTOCOL                *DummyDevicePath;
+    EFI_DEVICE_PATH_PROTOCOL                *RealDevicePath;
+    EFI_HANDLE                              NewHandle = NULL;
+    UINT64                                  BaseAddress, FrameBufferSize; 
+    UINT32                                  BytesPerRow, Width, Height, Depth;
+    UINTN                                   FbConfSize = 0;
     
     DEBUG((DEBUG_INIT, "GopShim Starting\n"));
     
@@ -134,7 +136,7 @@ UefiMain(EFI_HANDLE ImageHandle,
     if (Status == EFI_SUCCESS)
     {
         // Shim not required
-        DEBUG((DEBUG_INFO, "GOP found! This shim is not required.\n"));
+        DEBUG((DEBUG_ERROR, "GOP found! This shim is not required.\n"));
         return Status;
     }
     
@@ -217,22 +219,25 @@ UefiMain(EFI_HANDLE ImageHandle,
     
     DEBUG((DEBUG_INFO, "GOP setup complete\n"));
     
-    // Setup Device Path
-    Status = gBS->LocateProtocol(&gEfiDevicePathProtocolGuid, NULL, (VOID **) &DevicePath);
+    // HACK FOR WINDOWS SUPPORT:
+    // Find a random Device Path Protocol. This data doesn't have to be valid, it just has to exist.
+    Status = gBS->LocateProtocol(&gEfiDevicePathProtocolGuid, NULL, (VOID **) &DummyDevicePath);
     if (Status != EFI_SUCCESS)
     {
         DEBUG((DEBUG_ERROR, "Cannot locate EFI device path protocol. Status = %d\n", Status));
+        return Status;
     }
     
-    EFI_DEVICE_PATH_PROTOCOL *Path = AppendDevicePathNode(DevicePath, (EFI_DEVICE_PATH_PROTOCOL *) &mGraphicsOutputAdrNode);
+    // Combine it with some 
+    RealDevicePath = AppendDevicePathNode(DummyDevicePath,
+            (EFI_DEVICE_PATH_PROTOCOL *) &mGraphicsOutputAdrNode);
     
     // Install new protocol into EFI
-    EFI_HANDLE NewHandle = NULL;
     Status = gBS->InstallMultipleProtocolInterfaces(&NewHandle,
                     &gEfiGraphicsOutputProtocolGuid,
                     &NewGop,
                     &gEfiDevicePathProtocolGuid,
-                    Path,
+                    RealDevicePath,
                     NULL);
     if (Status != EFI_SUCCESS)
     {
