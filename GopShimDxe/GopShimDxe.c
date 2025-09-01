@@ -8,7 +8,11 @@
 #include <Library/FrameBufferBltLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/DebugLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Protocol/UgaDraw.h>
+#include <Protocol/DevicePath.h>
+
+
 
 #include "AppleVideo.h"
 
@@ -17,8 +21,18 @@
 EFI_GRAPHICS_OUTPUT_PROTOCOL            NewGop;
 EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE       NewGopMode;
 EFI_GRAPHICS_OUTPUT_MODE_INFORMATION    NewGopInfo;
+EFI_DEVICE_PATH_PROTOCOL                *DevicePath;
 
 FRAME_BUFFER_CONFIGURE                  *FbConf;
+
+CONST ACPI_ADR_DEVICE_PATH  mGraphicsOutputAdrNode = {
+  {
+    ACPI_DEVICE_PATH,
+    ACPI_ADR_DP,
+    { sizeof (ACPI_ADR_DEVICE_PATH), 0 },
+  },
+  ACPI_DISPLAY_ADR (1, 0, 0, 1, 0, ACPI_ADR_DISPLAY_TYPE_VGA, 0, 0)
+};
 
 /* EFI PROTOCOL FUNCTIONS */
 
@@ -152,6 +166,8 @@ UefiMain(EFI_HANDLE ImageHandle,
     // to be equal to BytesPerRow / 4.
     //
     
+    SetMem(&NewGopInfo, 0, sizeof(NewGopInfo));
+    
     NewGopInfo.Version                          = 0;
     NewGopInfo.HorizontalResolution             = Width; 
     NewGopInfo.VerticalResolution               = Height;
@@ -161,6 +177,8 @@ UefiMain(EFI_HANDLE ImageHandle,
     NewGopInfo.PixelInformation.BlueMask        = 0x000000FF;
     NewGopInfo.PixelInformation.ReservedMask    = 0xFF000000;
     NewGopInfo.PixelsPerScanLine                = (BytesPerRow / 4);
+    
+    SetMem(&NewGopMode, 0, sizeof(NewGopMode));
     
     NewGopMode.MaxMode                          = 1; // Only one mode supported
     NewGopMode.Mode                             = 0; // Only one mode supported
@@ -190,6 +208,8 @@ UefiMain(EFI_HANDLE ImageHandle,
         }
     }
     
+    SetMem(&NewGop, 0, sizeof(NewGop));
+    
     NewGop.QueryMode                            = GopShimQueryMode;
     NewGop.SetMode                              = GopShimSetMode;
     NewGop.Blt                                  = GopShimBlt;
@@ -197,12 +217,26 @@ UefiMain(EFI_HANDLE ImageHandle,
     
     DEBUG((DEBUG_INFO, "GOP setup complete\n"));
     
-    // Install new protocol into EFI
-    EFI_HANDLE NewHandle = NULL;
-    Status = gBS->InstallMultipleProtocolInterfaces(&NewHandle, &gEfiGraphicsOutputProtocolGuid, &NewGop, NULL);
+    // Setup Device Path
+    Status = gBS->LocateProtocol(&gEfiDevicePathProtocolGuid, NULL, (VOID **) &DevicePath);
     if (Status != EFI_SUCCESS)
     {
-        DEBUG((DEBUG_INFO, "Cannot create new protocol. Status = %d\n", Status));
+        DEBUG((DEBUG_ERROR, "Cannot locate EFI device path protocol. Status = %d\n", Status));
+    }
+    
+    EFI_DEVICE_PATH_PROTOCOL *Path = AppendDevicePathNode(DevicePath, (EFI_DEVICE_PATH_PROTOCOL *) &mGraphicsOutputAdrNode);
+    
+    // Install new protocol into EFI
+    EFI_HANDLE NewHandle = NULL;
+    Status = gBS->InstallMultipleProtocolInterfaces(&NewHandle,
+                    &gEfiGraphicsOutputProtocolGuid,
+                    &NewGop,
+                    &gEfiDevicePathProtocolGuid,
+                    Path,
+                    NULL);
+    if (Status != EFI_SUCCESS)
+    {
+        DEBUG((DEBUG_ERROR, "Cannot create new protocol. Status = %d\n", Status));
         return Status;
     }
 
