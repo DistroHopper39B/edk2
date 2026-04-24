@@ -29,9 +29,9 @@
   PCD_DYNAMIC_AS_DYNAMICEX            = TRUE
 
   DEFINE SOURCE_DEBUG_ENABLE          = FALSE
-  DEFINE PS2_KEYBOARD_ENABLE          = FALSE
+  DEFINE PS2_KEYBOARD_ENABLE          = TRUE
   DEFINE RAM_DISK_ENABLE              = FALSE
-  DEFINE SIO_BUS_ENABLE               = FALSE
+  DEFINE SIO_BUS_ENABLE               = TRUE
   DEFINE SECURITY_STUB_ENABLE         = TRUE
   DEFINE SMM_SUPPORT                  = FALSE
   DEFINE PLATFORM_BOOT_TIMEOUT        = 3
@@ -41,10 +41,10 @@
   DEFINE PS2_MOUSE_ENABLE             = TRUE
   DEFINE SD_MMC_TIMEOUT               = 1000000
   DEFINE USE_CBMEM_FOR_CONSOLE        = FALSE
-  DEFINE BOOTSPLASH_IMAGE             = FALSE
+  DEFINE BOOTSPLASH_IMAGE             = TRUE
   DEFINE NVME_ENABLE                  = TRUE
   DEFINE LOCKBOX_SUPPORT              = FALSE
-  DEFINE LOAD_OPTION_ROMS             = FALSE
+  DEFINE LOAD_OPTION_ROMS             = TRUE
 
   #
   # Capsule updates
@@ -79,7 +79,7 @@
   # SBL:      UEFI payload for Slim Bootloader
   # COREBOOT: UEFI payload for coreboot
   #
-  DEFINE   BOOTLOADER                 = SBL
+  DEFINE   BOOTLOADER                 = EFIONEFI
 
   #
   # CPU options
@@ -162,7 +162,7 @@
   # HPET:  UEFI Payload will use HPET timer
   # LAPIC: UEFI Payload will use local APIC timer
   #
-  DEFINE TIMER_SUPPORT      = HPET
+  DEFINE TIMER_SUPPORT      = LAPIC
 
   DEFINE MULTIPLE_DEBUG_PORT_SUPPORT = FALSE
 
@@ -347,6 +347,8 @@
 !if $(UNIVERSAL_PAYLOAD) == FALSE
   !if $(BOOTLOADER) == "COREBOOT"
     BlParseLib|UefiPayloadPkg/Library/CbParseLib/CbParseLib.inf
+  !elseif $(BOOTLOADER) == "EFIONEFI"
+    BlParseLib|UefiPayloadPkg/Library/EfiOnEfiParseLib/EfiOnEfiParseLib.inf
   !else
     BlParseLib|UefiPayloadPkg/Library/SblParseLib/SblParseLib.inf
   !endif

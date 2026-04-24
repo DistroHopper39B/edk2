@@ -758,10 +758,13 @@ InitializeGraphicsOutput (
 {
   EFI_STATUS  Status;
   VOID        *HobStart;
+  
+  DEBUG ((DEBUG_ERROR, "****** GOP STARTING ******\n"));
 
   HobStart = GetFirstGuidHob (&gEfiGraphicsInfoHobGuid);
 
   if ((HobStart == NULL) || (GET_GUID_HOB_DATA_SIZE (HobStart) < sizeof (EFI_PEI_GRAPHICS_INFO_HOB))) {
+    DEBUG ((DEBUG_ERROR, "FAILED to find GOP\n"));
     return EFI_NOT_FOUND;
   }
 
